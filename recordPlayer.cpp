@@ -16,15 +16,9 @@ void RecordPlayer::PlayPlaylist(){
         playlist.erase(playlist.begin());  
         PlayMusic(name_music);
     }
+    stoped = true;
+    std::cout << "🎵 Playlist finished.\n";
 }
-
-// void RecordPlayer::SetInterface(Interface* interface){
-//     ui = interface;
-// }
-// void RecordPlayer::Notify(std::string name_music){
-//     std::time_t now = std::time(nullptr);
-//     ui->UpdateInterface(name_music, volume, playlist.size(), &now);
-// }
 
 void RecordPlayer::PlayMusic(std::string name_audio){
     
@@ -35,7 +29,7 @@ void RecordPlayer::PlayMusic(std::string name_audio){
     }
     this->current_music = name_audio;
     Mix_PlayMusic(music, count_playing);//добавить зацикливание. 0 - проигрывание 1 раз
-    while(!this->stoped){
+    while(!this->stoped && Mix_PlayingMusic()){
         if(this->paused){
             Mix_PauseMusic();
         }else{

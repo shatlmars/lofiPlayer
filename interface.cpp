@@ -8,7 +8,7 @@ Interface::Interface(){
     nodelay(stdscr, TRUE);
     keypad(stdscr, TRUE);
     int height = 10;
-    int width  = 30;
+    int width  = 50;
     int starty = 0;
     int startx = 0;
     win = newwin(height, width, starty, startx);

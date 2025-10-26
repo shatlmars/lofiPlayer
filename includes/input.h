@@ -1,12 +1,13 @@
-#include <ncurses.h>
+#include "ncurses.h"
 #include <iostream>
-#include <atomic>
+// #include <atomic>
 #include "recordPlayer.h"
+
 
 class Input{
 public:
     Input();
-    void InputButtons(Player& player);
+    void InputButtons(RecordPlayer& player);
 private:
      
 protected:

@@ -3,51 +3,44 @@
 #include <atomic>
 #include "includes/input.h"
 #include "includes/interface.h"
-#include "includes/recordPlayer.h"
 #include "includes/network.h"
+#include <filesystem>
+
 
 
 int main(int argc, char* argv[])
 {
     if(argc < 2){
+        std::cout << "Error\n";
         return 1;
     }
-    std::string path_to_folder;
-
-    std::vector<std::string>paths_to_audio;
-
+    std::string path_to_folder = argv[1];
+    std::vector<std::string>playlist;
+    for(const auto& entry : std::filesystem::directory_iterator(path_to_folder))
+    {
+        if(entry.is_regular_file() && entry.path().extension() == ".mp3"){
+            playlist.push_back(entry.path().c_str());
+        }
+    }
+    RecordPlayer player(playlist);
     Input input;
-    Player player(paths_to_audio);
-
+    Interface interface;
     std::thread t_player([&](){
         player.PlayPlaylist();
     });
     std::thread t_input([&](){
         input.InputButtons(std::ref(player));
     });
-
-
+    std::thread t_interface([&](){
+        interface.Draw();
+    });
     t_player.join();
     t_input.join();
-    // std::thread t_playlist(Player::PlayPlaylist, &player, std::ref(running), std::ref(pause));
-    
-    // if(SDL_Init(SDL_INIT_AUDIO) < 0){
-    //     std::cout << SDL_GetError() << "\n";
-    //     return 1;
-    // }    
-    // std::cout << "init is normn\n";
-    // std::thread music_thread(PlayingMusic, "song.mp3");
-    // std::thread inputThread(inputLoop);
-    // // std::cin.get();
-
-    // // stoped = true;`
-    
-    // music_thread.join();
-    // inputThread.join();
-    
-    // SDL_Quit();
+    t_interface.join();
 
 
-    // Mix_CloseAudio();
+    endwin();
     return 0;
 }
+
+//clang++ main.cpp input.cpp interface.cpp network.cpp recordPlayer.cpp  -Iincludes -lncurses -lSDL2 -lSDL2_mixer -o build/main

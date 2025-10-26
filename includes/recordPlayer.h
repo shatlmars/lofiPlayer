@@ -3,27 +3,28 @@
 #include <atomic>
 #include <vector>
 #include <iostream>
+#include <chrono>
 
 
-class Player{
+
+class RecordPlayer{
 public:
-    Player(std::vector<std::string>playlist): playlist{playlist}{
-        stoped = false;
-        paused = false;
-    }
+    RecordPlayer(std::vector<std::string>playlist);
     void PlayPlaylist();
     void changePlaylist(std::vector<std::string>);
-    void PlayMusic(std::string name_audio, int count_playing);
+    void PlayMusic(std::string name_audio);
+    void AddVolume();
     void SetStopStatus(bool status);
     void SetPauseStatus(bool status);
     bool GetStopStatus(){return stoped;}
     bool GetPauseStatus() {return paused;}
-    ~Player();
+    int  GetVolume(){return volume;}
+    ~RecordPlayer();
 private:
+protected:
     std::atomic<bool> stoped;
     std::atomic<bool> paused;
     std::vector<std::string> playlist;
     int count_playing;
-protected:
-    
+    int volume;
 };

@@ -1,16 +1,23 @@
+#pragma once
+
 #include "ncurses.h"
 #include <string>
-#include <chrono>
 #include <ctime>
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include "recordPlayer.h"
+// class RecordPlayer;
 
 class Interface{
 public:
     Interface();
-    void Draw() ;
-    void UpdateInterface(std::string name_music, int volume, int count_music_in_playlist, std::time_t time);
+    void InputButtons(RecordPlayer* player);
+    void UpdateInterface(bool pause_status, std::string name_music, int volume, int count_music_in_playlist, std::time_t* time);
+    void Run(RecordPlayer& player);
     ~Interface();
 private:
-        
+    WINDOW* win;
 protected:
 
 };
@@ -48,7 +55,7 @@ public:
 
     void removeObserver(Observer* observer) override{
         observers.erase(std::remove(observers.begin(), observers.end(), observer));
-    }  
+    }
 
     void notifyObservers() override{
         for(Observer* Observer : observers){

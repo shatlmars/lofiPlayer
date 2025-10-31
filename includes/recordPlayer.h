@@ -22,6 +22,7 @@ public:
     int  GetVolume()const {return volume;}
     int  GetPlaylistSize()const {return playlist.size();}
     std::string GetCurrentMusic()const {return current_music;}
+    double GetMusicPosition() const {return music_position;}
     ~RecordPlayer();
 private:
     std::string current_music;
@@ -31,4 +32,5 @@ protected:
     std::vector<std::string> playlist;
     int count_playing;
     int volume;
+    double music_position;
 };

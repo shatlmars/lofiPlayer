@@ -1,5 +1,6 @@
 #include "includes/recordPlayer.h"
 
+
 RecordPlayer::RecordPlayer(std::vector<std::string> playlist): playlist(playlist), stoped(false), paused(false), volume(128), count_playing(0){
         // this->playlist = playlist;
         // stoped = false;
@@ -17,7 +18,6 @@ void RecordPlayer::PlayPlaylist(){
         PlayMusic(name_music);
     }
     stoped = true;
-    std::cout << "🎵 Playlist finished.\n";
 }
 
 void RecordPlayer::PlayMusic(std::string name_audio){
@@ -31,8 +31,10 @@ void RecordPlayer::PlayMusic(std::string name_audio){
     Mix_PlayMusic(music, count_playing);//добавить зацикливание. 0 - проигрывание 1 раз
     while(!this->stoped && Mix_PlayingMusic()){
         if(this->paused){
+            
             Mix_PauseMusic();
         }else{
+            music_position = Mix_GetMusicPosition(music);
             Mix_VolumeMusic(this->volume);
             Mix_ResumeMusic();
         }

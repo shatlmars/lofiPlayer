@@ -1,7 +1,7 @@
 #include "includes/interface.h"
 
 
-Interface::Interface(){
+Interface::Interface(std::vector<std::string>* playlist){
     initscr();
     cbreak();
     noecho();
@@ -12,29 +12,38 @@ Interface::Interface(){
     int starty = 0;
     int startx = 0;
     win = newwin(height, width, starty, startx);
-
+    for(const auto& name_music: *playlist){
+        this->playlist.push_back(name_music);
+    }
 }
 
-void Interface::UpdateInterface(bool pause_status, std::string name_music, int volume, int count_music_in_playlist, std::time_t* time){
+
+
+void Interface::UpdateInterface(bool pause_status, std::string name_music, double music_pos, int volume, int count_music_in_playlist, std::time_t* time){
     //29 --
-    move(0,0);   // фиксируем курсор в верхнем левом углу
+    // move(0,0);
     werase(win);
 
     std::tm* localtime = std::localtime(time);
+    mvwprintw(win, 0,0, "-------------------------------------------------");
     mvwprintw(win,1, 2, "Status: %s", pause_status ? "Paused" : "Playing");
     float i_volume = ((float)volume/128)*100;
+    mvwprintw(win, 2,2, "time: %f", music_pos);
     
-    
-    mvwprintw(win,3, 2, "| Now playing: %s|", name_music.c_str());
-    mvwprintw(win,4, 2, "| Volume: %.0f|", i_volume);
-    mvwprintw(win,5, 2, "| Playlist count: %-16d|", count_music_in_playlist);
-    // mvprintw(6, 0, "| Time: %02d:%02d:%02d                  |", 
-    //          localtime->tm_hour, localtime->tm_min, localtime->tm_sec);
-    // mvwprintw(win,7, 2, "|----------------------------|");
-    // refresh();
+    mvwprintw(win,3, 2, "Now playing: %s", name_music.c_str());
+    mvwprintw(win,4, 2, "Volume: %.0f", i_volume);
+    mvwprintw(win,5, 2, "Playlist count: %-16d", count_music_in_playlist);
+    mvwprintw(win, 6,0, "-------------------------------------------------");
+    mvwprintw(win,7, 2, "Playlist:");
+    int row = 8;
+
+    for(const auto& name: playlist){
+        mvwprintw(win, row, 2,"%d: %s", row-7, name.c_str());
+        row++;
+    }
     wrefresh(win);
 }   
-//src/libmpg123/parse.c:skip_junk():1300] error: Giving up searching valid MPEG header after 65536 bytes of junk
+
 void Interface::InputButtons(RecordPlayer* player){
     bool i_paused = player->GetPauseStatus();
     int ch = getch();
@@ -54,6 +63,14 @@ void Interface::InputButtons(RecordPlayer* player){
         break;
         case KEY_DOWN:
             player->MinusVolume();
+        break;
+        case KEY_LEFT:
+        break;
+        case KEY_RIGHT:
+        break;
+        case 'l':
+            // ShowPlaylist();
+        //show all playlist
         break;
         default:
             break;
@@ -96,20 +113,42 @@ void Interface::Run(RecordPlayer& player){
         }
         UpdateInterface(player.GetPauseStatus(),
             i_current_music,
+            player.GetMusicPosition(),
             player.GetVolume(),
             player.GetPlaylistSize(),
             &time);
             std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 }
+
 Interface::~Interface(){
-    // wclear(win);
+    wclear(win);
     mvprintw(2, 0, "Bye:)");
     wrefresh(win);
     std::this_thread::sleep_for(std::chrono::seconds(2));
     delwin(win);
     endwin();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
     // ┌─────────────────────────────┐

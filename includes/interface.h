@@ -7,17 +7,20 @@
 #include <chrono>
 #include <thread>
 #include "recordPlayer.h"
+#include <list>
 // class RecordPlayer;
 
 class Interface{
 public:
-    Interface();
+    Interface(std::vector<std::string>* playlist);
     void InputButtons(RecordPlayer* player);
-    void UpdateInterface(bool pause_status, std::string name_music, int volume, int count_music_in_playlist, std::time_t* time);
+    void UpdateInterface(bool pause_status, std::string name_music, double music_pos, int volume, int count_music_in_playlist, std::time_t* time);
     void Run(RecordPlayer& player);
+    // void ShowPlaylist();
     ~Interface();
 private:
     WINDOW* win;
+    std::list<std::string> playlist;
 protected:
 
 };

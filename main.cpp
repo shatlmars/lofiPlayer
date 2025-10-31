@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     }
     RecordPlayer player(playlist);
     Input input;
-    Interface ui;
+    Interface ui(&playlist);
     std::thread t_player([&](){
         player.PlayPlaylist();
     });
